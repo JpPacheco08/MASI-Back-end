@@ -1,0 +1,130 @@
+openapi: 3.0.0
+info:
+  title: Auth API
+  description: API for user authentication and registration.
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080/v1/api
+    description: Local development server
+tags:
+  - name: Auth
+    description: User authentication operations
+
+paths:
+  /auth/register:
+    post:
+      tags:
+        - Auth
+      summary: Register a new user
+      description: Creates a new user account with a unique email and password.
+      requestBody:
+        description: User registration data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+            example:
+              email: user@example.com
+              password: password123
+              name: John Doe
+      responses:
+        '201':
+          description: User successfully registered.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+              example:
+                id: 12345
+                email: user@example.com
+                name: John Doe
+        '400':
+          description: Invalid request body or user already exists.
+        '500':
+          description: Internal server error.
+
+  /auth/login:
+    post:
+      tags:
+        - Auth
+      summary: Login to an existing user account
+      description: Authenticates a user and returns their information.
+      requestBody:
+        description: User login credentials
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+            example:
+              email: user@example.com
+              password: password123
+      responses:
+        '200':
+          description: User successfully logged in.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+              example:
+                id: 12345
+                email: user@example.com
+                name: John Doe
+        '401':
+          description: Invalid credentials.
+        '400':
+          description: Invalid request body.
+
+components:
+  schemas:
+    RegisterRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          example: user@example.com
+        password:
+          type: string
+          format: password
+          example: password123
+        name:
+          type: string
+          example: John Doe
+      required:
+        - email
+        - password
+        - name
+    LoginRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          example: user@example.com
+        password:
+          type: string
+          format: password
+          example: password123
+      required:
+        - email
+        - password
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 12345
+        email:
+          type: string
+          format: email
+          example: user@example.com
+        name:
+          type: string
+          example: John Doe
+      required:
+        - id
+        - email
+        - name
