@@ -2,9 +2,11 @@ package br.edu.fiec.MapeamentoDeSaude.features.auth.controllers;
 
 
 import br.edu.fiec.MapeamentoDeSaude.features.auth.dto.LoginRequest;
+import br.edu.fiec.MapeamentoDeSaude.features.auth.dto.LoginResponse;
 import br.edu.fiec.MapeamentoDeSaude.features.auth.dto.RegisterRequest;
 import br.edu.fiec.MapeamentoDeSaude.features.auth.services.AuthService;
 import br.edu.fiec.MapeamentoDeSaude.features.user.models.User;
+import br.edu.fiec.MapeamentoDeSaude.utils.JwtService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,9 +19,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     private final AuthService authService;
+    private final JwtService jwtService;
 
-    public AuthController(AuthService authService) {
+    public AuthController(AuthService authService,
+                          JwtService jwtService) {
         this.authService = authService;
+        this.jwtService = jwtService;
     }
 
     @PostMapping("/register")
@@ -29,8 +34,11 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<User> login(@RequestBody LoginRequest request) {
+    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request) {
         User loggedInUser = authService.login(request);
-        return new ResponseEntity<>(loggedInUser, HttpStatus.OK);
+        String jwtToken = this.jwtService.generateToken(loggedInUser);
+        LoginResponse response = new LoginResponse();
+        response.setToken(jwtToken);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

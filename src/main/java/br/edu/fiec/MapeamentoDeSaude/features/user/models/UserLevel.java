@@ -1,7 +1,16 @@
 package br.edu.fiec.MapeamentoDeSaude.features.user.models;
 
-public enum UserLevel {
+import org.springframework.security.core.GrantedAuthority;
+
+public enum UserLevel implements GrantedAuthority {
     USER,
     ADMIN,
-    UBSADMIN
+    UBSADMIN;
+
+    private String authority;
+
+    @Override
+    public String getAuthority() {
+        return authority;
+    }
 }
