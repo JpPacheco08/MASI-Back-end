@@ -1,0 +1,16 @@
+package br.edu.fiec.MapeamentoDeSaude.features.user.dto;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.Data;
+
+@Data
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class MyUserDto {
+    String nome;
+    String email;
+    String cnpj;
+    String crm; // Exemplo para um médico
+    String nomeDaEmpresa; // Exemplo para uma UBS
+    String tipo;
+    String picture;
+}

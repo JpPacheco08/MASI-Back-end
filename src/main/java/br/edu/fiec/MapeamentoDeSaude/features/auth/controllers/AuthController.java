@@ -1,6 +1,5 @@
 package br.edu.fiec.MapeamentoDeSaude.features.auth.controllers;
 
-
 import br.edu.fiec.MapeamentoDeSaude.features.auth.dto.LoginRequest;
 import br.edu.fiec.MapeamentoDeSaude.features.auth.dto.LoginResponse;
 import br.edu.fiec.MapeamentoDeSaude.features.auth.dto.RegisterRequest;
@@ -21,8 +20,7 @@ public class AuthController {
     private final AuthService authService;
     private final JwtService jwtService;
 
-    public AuthController(AuthService authService,
-                          JwtService jwtService) {
+    public AuthController(AuthService authService, JwtService jwtService) {
         this.authService = authService;
         this.jwtService = jwtService;
     }
@@ -36,7 +34,8 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request) {
         User loggedInUser = authService.login(request);
-        String jwtToken = this.jwtService.generateToken(loggedInUser);
+        // ATUALIZAR ESTA LINHA
+        String jwtToken = this.jwtService.generateTokenComplete(loggedInUser);
         LoginResponse response = new LoginResponse();
         response.setToken(jwtToken);
         return new ResponseEntity<>(response, HttpStatus.OK);

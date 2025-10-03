@@ -1,19 +1,20 @@
 package br.edu.fiec.MapeamentoDeSaude.utils;
 
+import br.edu.fiec.MapeamentoDeSaude.features.user.models.User; // IMPORTAR A CLASSE User
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Service;
+
 import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
-
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Service;
 
 @Service
 public class JwtService {
@@ -34,6 +35,15 @@ public class JwtService {
 
     public String generateToken(UserDetails userDetails) {
         return generateToken(new HashMap<>(), userDetails);
+    }
+
+    // ADICIONAR ESTE NOVO MÉTODO
+    public String generateTokenComplete(User user) {
+        HashMap<String, Object> extraInfos = new HashMap<>();
+        extraInfos.put("name", user.getName());
+        extraInfos.put("picture", user.getPicture());
+        extraInfos.put("accessLevel", user.getAccessLevel().name());
+        return generateToken(extraInfos, user);
     }
 
     public String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
