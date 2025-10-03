@@ -3,9 +3,11 @@ package br.edu.fiec.MapeamentoDeSaude.features.user.controllers;
 import br.edu.fiec.MapeamentoDeSaude.features.user.dto.MyUserDto;
 import br.edu.fiec.MapeamentoDeSaude.features.user.models.User;
 import br.edu.fiec.MapeamentoDeSaude.features.user.services.UserService;
+import br.edu.fiec.MapeamentoDeSaude.utils.ImageUtils;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/v1/api/users")
@@ -31,5 +33,13 @@ public class UserController {
         dto.setTipo(user.getAccessLevel().name());
         dto.setPicture(user.getPicture());
         return dto;
+    }
+
+    @PutMapping("/photo")
+    public void insertUserImage(@RequestParam("image") MultipartFile image, Authentication authentication){
+        User user = (User) authentication.getPrincipal();
+        String imageName = ImageUtils.saveImage(image);
+        user.setPicture(imageName);
+        userService.save(user);
     }
 }

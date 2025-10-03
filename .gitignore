@@ -31,3 +31,9 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# Adicione as linhas abaixo
+uploads
+uploads/*
+thumbnails
+thumbnails/*

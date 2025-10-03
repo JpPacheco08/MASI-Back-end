@@ -43,7 +43,7 @@ public class SecurityConfig {
                 .authenticationProvider(authenticationProvider)
                 .authorizeHttpRequests(requests -> requests
                         // ATUALIZAR ESTA LINHA PARA LIBERAR AS NOVAS ROTAS
-                        .requestMatchers("/v1/api/auth/**", "/v1/api/users/**").permitAll()
+                        .requestMatchers("/image/**","/v1/api/auth/**", "/v1/api/users/**").permitAll()
                         .anyRequest().authenticated()
                 ).sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
