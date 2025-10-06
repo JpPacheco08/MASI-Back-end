@@ -3,6 +3,7 @@ package br.edu.fiec.MapeamentoDeSaude.features.auth.services.impl;
 import br.edu.fiec.MapeamentoDeSaude.features.auth.dto.LoginRequest;
 import br.edu.fiec.MapeamentoDeSaude.features.auth.dto.RegisterRequest;
 import br.edu.fiec.MapeamentoDeSaude.features.auth.services.AuthService;
+import br.edu.fiec.MapeamentoDeSaude.features.user.models.RegisterState; // IMPORTAR
 import br.edu.fiec.MapeamentoDeSaude.features.user.models.User;
 import br.edu.fiec.MapeamentoDeSaude.features.user.models.UserLevel;
 import br.edu.fiec.MapeamentoDeSaude.features.user.services.UserService;
@@ -14,11 +15,9 @@ import org.springframework.stereotype.Service;
 public class AuthServiceImpl implements AuthService {
 
     private final UserService userService;
-    //private final PasswordEncoder passwordEncoder;
 
     public AuthServiceImpl(UserService userService) {
         this.userService = userService;
-        //this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -26,9 +25,12 @@ public class AuthServiceImpl implements AuthService {
         User user = new User();
         user.setName(request.getName());
         user.setEmail(request.getEmail());
-        user.setPassword(request.getPassword());
-        user.setAccessLevel(UserLevel.USER); // Define o nível de acesso padrão
+        user.setPassword(PasswordEncryptor.encrypt(request.getPassword()));
+        user.setAccessLevel(UserLevel.USER);
         user.setPicture(request.getPicture());
+
+        // ADICIONE ESTA LINHA PARA USAR O ESTADO FALTANTE
+        user.setState(RegisterState.USER_CREATED);
 
         return userService.save(user);
     }
@@ -36,7 +38,7 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public User login(LoginRequest request) {
         return userService.findByEmail(request.getEmail())
-                .filter(user -> PasswordEncryptor.matches(request.getPassword(), user.getPassword()))
+                .filter(user -> PasswordEncryptor.getInstance().matches(request.getPassword(), user.getPassword()))
                 .orElseThrow(() -> new BadCredentialsException("Email ou senha inválidos."));
     }
 }
