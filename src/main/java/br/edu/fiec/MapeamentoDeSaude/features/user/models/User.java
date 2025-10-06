@@ -2,8 +2,8 @@ package br.edu.fiec.MapeamentoDeSaude.features.user.models;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import org.hibernate.annotations.UuidGenerator;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority; // Importar
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
@@ -11,8 +11,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Entity
-//@Table(name = "users")
-@Data // Lombok: Gera Getters, Setters, toString, etc.
+@Data
 public class User implements UserDetails {
 
     @Id
@@ -36,9 +35,15 @@ public class User implements UserDetails {
     @Column
     private String picture;
 
+    // ADICIONE ESTAS 3 LINHAS ABAIXO
+    @Column
+    @Enumerated(EnumType.STRING)
+    private RegisterState state;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(accessLevel);
+        // Esta implementação é mais robusta, como a do professor
+        return List.of(new SimpleGrantedAuthority(accessLevel.name()));
     }
 
     @Override
