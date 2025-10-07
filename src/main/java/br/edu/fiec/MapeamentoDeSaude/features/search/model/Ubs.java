@@ -1,4 +1,4 @@
-package br.edu.fiec.MapeamentoDeSaude.features.search.entity;
+package br.edu.fiec.MapeamentoDeSaude.features.search.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

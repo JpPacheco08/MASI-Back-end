@@ -1,12 +1,12 @@
 package br.edu.fiec.MapeamentoDeSaude.features.search.repositories;
 
-import br.edu.fiec.MapeamentoDeSaude.features.search.model.Ubs;
+import br.edu.fiec.MapeamentoDeSaude.features.search.model.Vaccine;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
 @Repository
-public interface UbsRepository extends JpaRepository<Ubs, Long> {
-    Optional<Ubs> findByNomeUbs(String nomeUbs);
+public interface VaccineRepository extends JpaRepository<Vaccine, Long> {
+    Optional<Vaccine> findByNomeVacina(String nomeVacina);
 }
