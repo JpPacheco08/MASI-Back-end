@@ -37,3 +37,6 @@ uploads
 uploads/*
 thumbnails
 thumbnails/*
+
+logs
+logs/**
