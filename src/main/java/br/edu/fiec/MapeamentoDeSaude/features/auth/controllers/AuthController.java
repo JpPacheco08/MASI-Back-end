@@ -6,6 +6,7 @@ import br.edu.fiec.MapeamentoDeSaude.features.auth.dto.RegisterRequest;
 import br.edu.fiec.MapeamentoDeSaude.features.auth.services.AuthService;
 import br.edu.fiec.MapeamentoDeSaude.features.user.models.User;
 import br.edu.fiec.MapeamentoDeSaude.utils.JwtService;
+import lombok.extern.slf4j.Slf4j; // Importar a anotação de log
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Slf4j // Adicionar a anotação
 @RestController
 @RequestMapping("/v1/api/auth")
 public class AuthController {
@@ -33,6 +35,9 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request) {
+        // Adicionar a linha de log
+        log.info("AuthController - login - usuário tentou logar com {}", request);
+
         User loggedInUser = authService.login(request);
         // ATUALIZAR ESTA LINHA
         String jwtToken = this.jwtService.generateTokenComplete(loggedInUser);
