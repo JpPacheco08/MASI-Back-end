@@ -1,4 +1,5 @@
-package br.edu.fiec.MapeamentoDeSaude.features.search.entity;
+// A linha do pacote foi alterada de '...search.entity' para '...search.model'
+package br.edu.fiec.MapeamentoDeSaude.features.search.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -19,6 +20,7 @@ public class Vaccine {
 
     @Column(name = "nome_vacina")
     private String nomeVacina;
+
     @Column(name = "desc_vacina")
     private String descVacina;
 }
