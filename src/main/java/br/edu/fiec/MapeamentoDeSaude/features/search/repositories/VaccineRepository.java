@@ -8,6 +8,5 @@ import java.util.Optional;
 
 @Repository
 public interface VaccineRepository extends JpaRepository<Vaccine, Long> {
-    // Método para encontrar uma vacina pelo nome
     Optional<Vaccine> findByNomeVacina(String nomeVacina);
 }
