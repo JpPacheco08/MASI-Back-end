@@ -1,6 +1,5 @@
 package br.edu.fiec.MapeamentoDeSaude.features.search.dto;
 
-
 import lombok.Data;
 
 @Data

@@ -42,7 +42,6 @@ public class SecurityConfig {
                 })
                 .authenticationProvider(authenticationProvider)
                 .authorizeHttpRequests(requests -> requests
-                        // ATUALIZAR ESTA LINHA PARA LIBERAR AS NOVAS ROTAS
                         .requestMatchers("/image/**", "/v1/api/auth/**", "/v1/api/users/**", "/v1/api/vaccines/**", "/v1/api/ubs/**").permitAll()
                         .anyRequest().authenticated()
                 ).sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

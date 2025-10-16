@@ -1,9 +1,10 @@
 package br.edu.fiec.MapeamentoDeSaude.features.user.controllers;
 
-import br.edu.fiec.MapeamentoDeSaude.features.user.dto.MyUserDto;
+import br.edu.fiec.MapeamentoDeSaude.features.user.dto.*;
 import br.edu.fiec.MapeamentoDeSaude.features.user.models.User;
 import br.edu.fiec.MapeamentoDeSaude.features.user.services.UserService;
 import br.edu.fiec.MapeamentoDeSaude.utils.ImageUtils;
+import jakarta.validation.Valid; // Importar
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -16,23 +17,28 @@ public class UserController {
 
     private final UserService userService;
 
-    // AQUI VOCÊ VAI ADICIONAR OS ENDPOINTS PARA CADA TIPO DE USUÁRIO
-    // Ex: @PostMapping("/admin"), @PostMapping("/ubsadmin"), etc.
-    // Por enquanto, vamos criar o endpoint para buscar os dados do usuário logado.
+    // endpoints de registo adicionados
+    @PostMapping("/admin")
+    public CreatedUserResponseDto registerAdmin(@Valid @RequestBody RegisterAdminDto registerAdminDto) {
+        return userService.saveAdmin(registerAdminDto);
+    }
+
+    @PostMapping("/ubsadmin")
+    public CreatedUserResponseDto registerUbsAdmin(@Valid @RequestBody RegisterUbsAdminDto registerUbsAdminDto) {
+        return userService.saveUbsAdmin(registerUbsAdminDto);
+    }
+
+    @PostMapping("/paciente")
+    public CreatedUserResponseDto registerPaciente(@Valid @RequestBody RegisterPacienteDto registerPacienteDto) {
+        return userService.savePaciente(registerPacienteDto);
+    }
+
 
     @GetMapping("/me")
     public MyUserDto getMe(Authentication authentication) {
         User user = (User) authentication.getPrincipal();
-        // Este método 'getMe' ainda precisa ser implementado no seu UserService
-        // return userService.getMe(user);
-
-        // Retorno provisório enquanto o método não existe:
-        MyUserDto dto = new MyUserDto();
-        dto.setNome(user.getName());
-        dto.setEmail(user.getEmail());
-        dto.setTipo(user.getAccessLevel().name());
-        dto.setPicture(user.getPicture());
-        return dto;
+        // Lógica correta: chamar o serviço
+        return userService.getMe(user);
     }
 
     @PutMapping("/photo")

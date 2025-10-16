@@ -29,7 +29,7 @@
     </Appenders>
 
     <Loggers>
-        <Logger name="com.fiec.estoqueback" level="INFO" additivity="false">
+        <Logger name="br.edu.fiec.MapeamentoDeSaude" level="INFO" additivity="false">
             <AppenderRef ref="Console"/>
             <AppenderRef ref="File"/>
         </Logger>
