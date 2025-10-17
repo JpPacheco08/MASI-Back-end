@@ -1,5 +1,6 @@
 package br.edu.fiec.MapeamentoDeSaude.features.user.services;
 
+import br.edu.fiec.MapeamentoDeSaude.features.firebase.models.dto.FcmTokenRequest;
 import br.edu.fiec.MapeamentoDeSaude.features.user.dto.CreatedUserResponseDto;
 import br.edu.fiec.MapeamentoDeSaude.features.user.dto.MyUserDto;
 import br.edu.fiec.MapeamentoDeSaude.features.user.dto.RegisterAdminDto;
@@ -27,4 +28,5 @@ public interface UserService {
     CreatedUserResponseDto saveAdmin(RegisterAdminDto registerAdminDto);
     CreatedUserResponseDto saveUbsAdmin(RegisterUbsAdminDto registerUbsAdminDto);
     CreatedUserResponseDto savePaciente(RegisterPacienteDto registerPacienteDto);
+    User updateFcmToken(UUID userId, FcmTokenRequest request);
 }

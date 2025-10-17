@@ -35,6 +35,9 @@ public class User implements UserDetails {
     @Column
     private String picture;
 
+    @Column
+    private String fcmToken;
+
     // ADICIONE ESTAS 3 LINHAS ABAIXO
     @Column
     @Enumerated(EnumType.STRING)
