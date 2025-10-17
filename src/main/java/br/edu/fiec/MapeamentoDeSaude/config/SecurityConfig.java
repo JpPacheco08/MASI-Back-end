@@ -42,7 +42,7 @@ public class SecurityConfig {
                 })
                 .authenticationProvider(authenticationProvider)
                 .authorizeHttpRequests(requests -> requests
-                        .requestMatchers("/image/**", "/v1/api/auth/**", "/v1/api/users/**", "/v1/api/vaccines/**", "/v1/api/ubs/**").permitAll()
+                        .requestMatchers("/image/**", "/v1/api/auth/**", "/v1/api/users/**", "/v1/api/vaccines/**", "/v1/api/ubs/**",  "/v1/api/notifications/sendToUser").permitAll()
                         .anyRequest().authenticated()
                 ).sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

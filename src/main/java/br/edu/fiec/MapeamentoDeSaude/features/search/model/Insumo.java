@@ -1,4 +1,4 @@
-package br.edu.fiec.MapeamentoDeSaude.features.search.models;
+package br.edu.fiec.MapeamentoDeSaude.features.search.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
@@ -6,16 +6,14 @@ import java.time.LocalDate;
 
 @Data
 @Entity
-@Table(name = "medicamentos")
-public class Medicamento {
-
+@Table(name = "insumos")
+public class Insumo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    private String nome;
-    private String principio_ativo;
     private String tipo;
+    private String nome;
     private Integer quantidade;
     private LocalDate validade;
 }
