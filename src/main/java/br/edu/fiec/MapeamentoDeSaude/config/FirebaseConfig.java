@@ -17,13 +17,10 @@ public class FirebaseConfig {
 
     // 1. Caminho para o arquivo de chave JSON da conta de serviço
     // Coloque o arquivo JSON na pasta src/main/resources
-    @Value
+    @Value("classpath:firebase-service-account.json")
     private Resource serviceAccountResource;
 
-    // 2. URL opcional do seu Realtime Database ou Storage Bucket (opcional, mas recomendado)
-    // Substitua pela sua URL real
-    @Value
-    private String databaseUrl;
+
 
 
     /**

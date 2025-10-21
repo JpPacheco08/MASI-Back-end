@@ -9,6 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/v1/api/ubs")
@@ -25,6 +27,11 @@ public class UbsController {
     @GetMapping("/{name}")
     public ResponseEntity<Ubs> getUbsByName(@PathVariable String name) {
         return ResponseEntity.ok(ubsService.getUbsByName(name));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Optional<Ubs>> getUbsById(@RequestParam UUID uuid) {
+        return ResponseEntity.ok(ubsService.getById(uuid));
     }
 
     @GetMapping
