@@ -1,4 +1,4 @@
-package br.edu.fiec.MapeamentoDeSaude.config.aspects;
+package br.edu.fiec.MapeamentoDeSaude.config;
 
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;

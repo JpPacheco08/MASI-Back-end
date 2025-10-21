@@ -8,6 +8,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @AllArgsConstructor
@@ -19,8 +21,9 @@ public class UbsServiceImpl implements UbsService {
     public Ubs createUbs(UbsDTO ubsDto) {
         Ubs ubs = new Ubs();
         ubs.setNomeUbs(ubsDto.getNomeUbs());
-        ubs.setEndereco(ubsDto.getEndereco());
         ubs.setTelefone(ubsDto.getTelefone());
+        ubs.setLatitude(ubsDto.getLatitude());
+        ubs.setLongitude(ubsDto.getLongitude());
         return ubsRepository.save(ubs);
     }
 
@@ -28,6 +31,11 @@ public class UbsServiceImpl implements UbsService {
     public Ubs getUbsByName(String name) {
         return ubsRepository.findByNomeUbs(name)
                 .orElseThrow(() -> new RuntimeException("UBS não encontrada com o nome: " + name));
+    }
+
+    @Override
+    public Optional<Ubs> getById(UUID uuid) {
+        return ubsRepository.findById(uuid);
     }
 
     @Override
@@ -39,8 +47,9 @@ public class UbsServiceImpl implements UbsService {
     public Ubs updateUbs(String name, UbsDTO ubsDto) {
         Ubs ubs = getUbsByName(name);
         ubs.setNomeUbs(ubsDto.getNomeUbs());
-        ubs.setEndereco(ubsDto.getEndereco());
         ubs.setTelefone(ubsDto.getTelefone());
+        ubs.setLatitude(ubsDto.getLatitude());
+        ubs.setLongitude(ubsDto.getLongitude());
         return ubsRepository.save(ubs);
     }
 
