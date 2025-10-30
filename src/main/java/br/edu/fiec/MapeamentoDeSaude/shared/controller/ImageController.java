@@ -39,6 +39,7 @@ public class ImageController {
         createDirectoryIfNotExists(THUMBNAIL_DIR);
     }
 
+    // Esta rota é pública (controlada pelo SecurityConfig)
     @GetMapping("/{filename}")
     public ResponseEntity<Resource> getImage(@PathVariable String filename, @RequestParam(value = "thumbnail", defaultValue = "false") boolean thumbnail) {
         try {

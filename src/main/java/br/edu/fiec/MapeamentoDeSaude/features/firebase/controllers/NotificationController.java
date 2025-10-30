@@ -10,6 +10,7 @@ import com.google.firebase.messaging.FirebaseMessagingException;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize; // Importar
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,6 +31,7 @@ public class NotificationController {
      * @return Resposta 200 OK com o usuário atualizado (ou um DTO de resposta).
      */
     @PutMapping("/token")
+    @PreAuthorize("isAuthenticated()") // Qualquer usuário logado
     public void registerFcmToken(
             // Assume que o ID do usuário pode ser obtido via Principal
             // Se estiver usando Spring Security, você pode usar @AuthenticationPrincipal
@@ -58,6 +60,7 @@ public class NotificationController {
     }
 
     @PostMapping("/sendToUser")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'UBSADMIN')") // Apenas admins
     public String sendToUser(@RequestBody NotificationMessage dto) throws FirebaseMessagingException {
         return notificationService.sendNotificationToUser(dto);
     }
