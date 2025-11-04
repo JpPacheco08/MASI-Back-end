@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/v1/api/vaccines")
@@ -38,8 +39,8 @@ public class VaccineController {
     }
 
     @DeleteMapping("/{name}")
-    public ResponseEntity<Void> deleteVaccine(@PathVariable String name) {
-        vaccineService.deleteVaccine(name);
+    public ResponseEntity<Void> deleteVaccine(@PathVariable UUID uuid) {
+        vaccineService.deleteVaccine(uuid);
         return ResponseEntity.noContent().build();
     }
 }
