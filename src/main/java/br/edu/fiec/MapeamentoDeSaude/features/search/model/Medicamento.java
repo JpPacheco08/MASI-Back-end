@@ -3,6 +3,7 @@ package br.edu.fiec.MapeamentoDeSaude.features.search.model;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.time.LocalDate;
+import java.util.UUID;
 
 @Data
 @Entity
@@ -10,12 +11,22 @@ import java.time.LocalDate;
 public class Medicamento {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID uuid;
 
+    @Column(name = "nome")
     private String nome;
+
+    @Column(name = "principio_ativo")
     private String principio_ativo;
+
+    @Column(name = "tipo")
     private String tipo;
+
+    @Column(name = "quantidade")
     private Integer quantidade;
+
+    @Column(name = "validade")
     private LocalDate validade;
 }

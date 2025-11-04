@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @AllArgsConstructor
@@ -43,8 +44,7 @@ public class VaccineServiceImpl implements VaccineService {
     }
 
     @Override
-    public void deleteVaccine(String name) {
-        Vaccine vaccine = getVaccineByName(name);
-        vaccineRepository.deleteById(vaccine.getId());
+    public void deleteVaccine(UUID uuid) {
+        vaccineRepository.deleteById(uuid);
     }
 }

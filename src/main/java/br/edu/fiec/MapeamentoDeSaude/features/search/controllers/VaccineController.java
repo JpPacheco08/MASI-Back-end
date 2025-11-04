@@ -10,6 +10,7 @@ import org.springframework.security.access.prepost.PreAuthorize; // Importar
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/v1/api/vaccines")
@@ -43,6 +44,9 @@ public class VaccineController {
     }
 
     @DeleteMapping("/{name}")
+    public ResponseEntity<Void> deleteVaccine(@PathVariable UUID uuid) {
+        vaccineService.deleteVaccine(uuid);
+      
     @PreAuthorize("hasAnyAuthority('ADMIN', 'UBSADMIN')")
     public ResponseEntity<Void> deleteVaccine(@PathVariable String name) {
         vaccineService.deleteVaccine(name);

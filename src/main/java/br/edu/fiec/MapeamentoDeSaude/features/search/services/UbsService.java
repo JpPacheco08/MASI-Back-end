@@ -10,10 +10,8 @@ import java.util.UUID;
 public interface UbsService {
     Ubs createUbs(UbsDTO ubsDto);
     Ubs getUbsByName(String name);
-
     Optional<Ubs> getById(UUID uuid);
-
     List<Ubs> getAllUbs();
     Ubs updateUbs(String name, UbsDTO ubsDto);
-    void deleteUbs(String name);
+    void deleteUbs(UUID uuid);
 }
