@@ -20,7 +20,7 @@ import java.util.List;
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity // ADICIONAR ESTA ANOTAÇÃO
+@EnableMethodSecurity // Isto habilita o @PreAuthorize
 public class SecurityConfig {
 
     private final AuthenticationProvider authenticationProvider;
@@ -42,7 +42,25 @@ public class SecurityConfig {
                 })
                 .authenticationProvider(authenticationProvider)
                 .authorizeHttpRequests(requests -> requests
-                        .requestMatchers("/image/**", "/v1/api/auth/**", "/v1/api/users/**", "/v1/api/vaccines/**", "/v1/api/ubs/**",  "/v1/api/notifications/sendToUser").permitAll()
+                        // Lista de rotas públicas
+                        .requestMatchers(
+                                // Rotas de Imagem (se você ainda usa o ImageController)
+                                "/images/**",
+
+                                // Rotas de Autenticação
+                                "/v1/api/auth/**",
+
+                                // APENAS o registro de paciente é público
+                                "/v1/api/users/paciente",
+
+                                // ---- ADICIONE ESTAS LINHAS PARA O SWAGGER ----
+                                "/v3/api-docs/**",
+                                "/swagger-ui/**",
+                                "/swagger-ui.html"
+                                // ---------------------------------------------
+
+                        ).permitAll()
+                        // Todo o resto exige autenticação
                         .anyRequest().authenticated()
                 ).sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
