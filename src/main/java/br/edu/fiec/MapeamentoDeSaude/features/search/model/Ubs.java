@@ -1,5 +1,7 @@
 package br.edu.fiec.MapeamentoDeSaude.features.search.model;
 
+import br.edu.fiec.MapeamentoDeSaude.features.user.models.UbsAdmin;
+import br.edu.fiec.MapeamentoDeSaude.features.user.models.User;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -28,5 +30,8 @@ public class Ubs {
 
     @Column(name = "longitude")
     private Double longitude;
+
+    @Column
+    private User user;
 
 }

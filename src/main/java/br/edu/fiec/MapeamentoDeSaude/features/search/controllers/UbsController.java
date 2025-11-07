@@ -45,7 +45,7 @@ public class UbsController {
     @DeleteMapping("/{name}")
     @PreAuthorize("hasAnyAuthority('ADMIN', 'UBSADMIN')")
     public ResponseEntity<Void> deleteUbs(@PathVariable String name) {
-        ubsService.deleteUbs(name);
+       // ubsService.deleteUbs(name);
         return ResponseEntity.noContent().build();
     }
 }
