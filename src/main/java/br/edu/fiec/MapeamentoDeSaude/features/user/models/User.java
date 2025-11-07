@@ -14,6 +14,7 @@ import java.util.UUID;
 @Data
 public class User implements UserDetails {
 
+    // ... (id, email, password, name, accessLevel, picture, fcmToken) ...
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(updatable = false, nullable = false)
@@ -38,7 +39,7 @@ public class User implements UserDetails {
     @Column
     private String fcmToken;
 
-    // ADICIONE ESTAS 3 LINHAS ABAIXO
+    // Este campo é essencial para a lógica do S3
     @Column
     @Enumerated(EnumType.STRING)
     private RegisterState state;
