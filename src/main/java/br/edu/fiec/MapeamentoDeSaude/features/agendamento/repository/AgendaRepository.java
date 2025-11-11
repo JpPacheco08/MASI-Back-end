@@ -17,4 +17,6 @@ public interface AgendaRepository extends JpaRepository<Agenda, UUID> {
     List<Agenda> findByHorario(Date horario);
     List<Agenda> findByStatus(AgendaStatus status);
     List<Agenda> findByUbs(Ubs ubs);
+
+    List<Agenda> findByUbsAndStatus(Ubs ubs, AgendaStatus status);
 }
