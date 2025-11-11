@@ -8,7 +8,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
@@ -33,7 +33,7 @@ public class Agenda {
 
     private Atendimento atendimento;
 
-    private Date horario;
+    private LocalDateTime horario;
 
     private Long duracao;
 }

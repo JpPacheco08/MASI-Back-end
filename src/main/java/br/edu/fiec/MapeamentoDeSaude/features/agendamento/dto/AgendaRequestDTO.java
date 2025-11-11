@@ -3,6 +3,7 @@ package br.edu.fiec.MapeamentoDeSaude.features.agendamento.dto;
 import br.edu.fiec.MapeamentoDeSaude.features.agendamento.models.TipoDePaciente;
 import lombok.Data;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Data
@@ -14,5 +15,5 @@ public class AgendaRequestDTO {
 
     private String atendimentoId;
 
-    private Date horario;
+    private LocalDateTime horario;
 }
