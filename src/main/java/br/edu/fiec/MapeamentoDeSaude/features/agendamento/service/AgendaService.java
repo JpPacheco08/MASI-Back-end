@@ -19,4 +19,6 @@ public interface AgendaService {
     Object aprovaAgenda(String agendaId, User user);
 
     List<AgendaResponseDTO> getAgendas(User user);
+
+    void cancelarAgenda(String agendaId, User user);
 }
