@@ -10,11 +10,12 @@ import org.springframework.security.access.prepost.PreAuthorize; // Importar
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/v1/api/ubs")
 @AllArgsConstructor
-public class UbsController {
+public class UbsController  {
 
     private final UbsService ubsService;
 
@@ -45,7 +46,7 @@ public class UbsController {
     @DeleteMapping("/{name}")
     @PreAuthorize("hasAnyAuthority('ADMIN', 'UBSADMIN')")
     public ResponseEntity<Void> deleteUbs(@PathVariable String name) {
-       // ubsService.deleteUbs(name);
+        ubsService.deleteUbs(UUID.fromString(name));
         return ResponseEntity.noContent().build();
     }
 }

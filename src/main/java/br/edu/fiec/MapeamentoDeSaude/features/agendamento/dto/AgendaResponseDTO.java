@@ -6,6 +6,7 @@ import br.edu.fiec.MapeamentoDeSaude.features.agendamento.models.TipoDePaciente;
 import lombok.Builder;
 import lombok.Data;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Data
@@ -14,7 +15,7 @@ public class AgendaResponseDTO {
 
     private String ubsId;
     private String ubsName;
-    private Date horario;
+    private LocalDateTime horario;
     private String userId;
     private String userName;
     private TipoDePaciente tipoDePaciente;

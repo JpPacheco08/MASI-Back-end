@@ -12,7 +12,8 @@ import java.util.UUID;
 
 @Entity
 @Data
-public class User implements UserDetails {
+public class User
+        implements UserDetails {
 
     // ... (id, email, password, name, accessLevel, picture, fcmToken) ...
     @Id

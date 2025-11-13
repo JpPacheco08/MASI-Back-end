@@ -19,17 +19,12 @@ public class VaccineController {
 
     private final VaccineService vaccineService;
 
-    @PostMapping
+    @PostMapping("/{name}")
     @PreAuthorize("hasAnyAuthority('ADMIN', 'UBSADMIN')")
     public ResponseEntity<Vaccine> createVaccine(@RequestBody VaccineDTO vaccineDto) {
         return new ResponseEntity<>(vaccineService.createVaccine(vaccineDto), HttpStatus.CREATED);
     }
 
-    @GetMapping("/{name}")
-    @PreAuthorize("isAuthenticated()") // Qualquer usuário logado
-    public ResponseEntity<Vaccine> getVaccineByName(@PathVariable String name) {
-        return ResponseEntity.ok(vaccineService.getVaccineByName(name));
-    }
 
     @GetMapping
     @PreAuthorize("isAuthenticated()") // Qualquer usuário logado
@@ -44,6 +39,7 @@ public class VaccineController {
     }
 
     @DeleteMapping("/{name}")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'UBSADMIN')")
     public ResponseEntity<Void> deleteVaccine(@PathVariable UUID uuid) {
         vaccineService.deleteVaccine(uuid);
         return null;

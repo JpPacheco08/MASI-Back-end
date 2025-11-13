@@ -19,7 +19,7 @@ public class Ubs {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(name = "nome_ubs")
+    @Column(name = "nome")
     private String nomeUbs;
 
     @Column(name = "telefone")

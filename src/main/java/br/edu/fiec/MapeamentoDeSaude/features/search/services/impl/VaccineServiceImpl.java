@@ -19,8 +19,17 @@ public class VaccineServiceImpl implements VaccineService {
     @Override
     public Vaccine createVaccine(VaccineDTO vaccineDto) {
         Vaccine vaccine = new Vaccine();
+        vaccine.setCodigoVacina(vaccineDto.getCodigoVacina());
         vaccine.setNomeVacina(vaccineDto.getNomeVacina());
         vaccine.setDescVacina(vaccineDto.getDescVacina());
+        vaccine.setTratamento(vaccineDto.getTratamento());
+        vaccine.setFaixaEtaria(vaccineDto.getFaixaEtaria());
+        vaccine.setIntervaloEntreDoses(vaccineDto.getIntervaloEntreDoses());
+        vaccine.setNumeroDoses(vaccine.getNumeroDoses());
+        vaccine.setQuantidadeEstoque(vaccineDto.getQuantidadeEstoque());
+        vaccine.setLote(vaccineDto.getLote());
+        vaccine.setDataFabricacao(vaccineDto.getDataFabricacao());
+        vaccine.setValidade(vaccineDto.getValidade());
         return vaccineRepository.save(vaccine);
     }
 
@@ -38,8 +47,17 @@ public class VaccineServiceImpl implements VaccineService {
     @Override
     public Vaccine updateVaccine(String name, VaccineDTO vaccineDto) {
         Vaccine vaccine = getVaccineByName(name);
+        vaccine.setCodigoVacina(vaccineDto.getCodigoVacina());
         vaccine.setNomeVacina(vaccineDto.getNomeVacina());
         vaccine.setDescVacina(vaccineDto.getDescVacina());
+        vaccine.setTratamento(vaccineDto.getTratamento());
+        vaccine.setFaixaEtaria(vaccineDto.getFaixaEtaria());
+        vaccine.setIntervaloEntreDoses(vaccineDto.getIntervaloEntreDoses());
+        vaccine.setNumeroDoses(vaccine.getNumeroDoses());
+        vaccine.setQuantidadeEstoque(vaccineDto.getQuantidadeEstoque());
+        vaccine.setLote(vaccineDto.getLote());
+        vaccine.setDataFabricacao(vaccineDto.getDataFabricacao());
+        vaccine.setValidade(vaccineDto.getValidade());
         return vaccineRepository.save(vaccine);
     }
 

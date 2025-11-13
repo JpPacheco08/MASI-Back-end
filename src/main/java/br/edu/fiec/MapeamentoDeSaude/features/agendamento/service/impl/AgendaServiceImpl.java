@@ -19,7 +19,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.AccessDeniedException; // 1. IMPORTAR
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.time.LocalDateTime;// 2. IMPORTAR
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors; // 3. IMPORTAR
@@ -123,7 +125,7 @@ public class AgendaServiceImpl implements AgendaService {
         }
 
         // 2. REGRA DE 24 HORAS
-        LocalDateTime agora = LocalDateTime.now();
+        LocalDateTime agora = LocalDateTime.from(Instant.now());
         LocalDateTime limiteParaCancelar = agenda.getHorario().minusHours(24); // <--- LINHA DO ERRO
 
         // Se "agora" estiver depois do limite, lança o erro

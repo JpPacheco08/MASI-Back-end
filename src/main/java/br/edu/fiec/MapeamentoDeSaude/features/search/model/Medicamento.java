@@ -2,6 +2,8 @@ package br.edu.fiec.MapeamentoDeSaude.features.search.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.checkerframework.checker.units.qual.C;
+
 import java.time.LocalDate;
 import java.util.UUID;
 
@@ -15,6 +17,9 @@ public class Medicamento {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID uuid;
 
+    @Column(name = "codigo_medicamento")
+    private String codigoMedicamento;
+
     @Column(name = "nome")
     private String nome;
 
@@ -24,8 +29,11 @@ public class Medicamento {
     @Column(name = "tipo")
     private String tipo;
 
-    @Column(name = "quantidade")
-    private Integer quantidade;
+    @Column(name = "quantidade_em_estoque")
+    private Integer quantidadeEstoque;
+
+    @Column(name = "lote")
+    private String lote;
 
     @Column(name = "validade")
     private LocalDate validade;
