@@ -15,7 +15,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/v1/api/ubs")
 @AllArgsConstructor
-public class UbsController {
+public class UbsController  {
 
     private final UbsService ubsService;
 

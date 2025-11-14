@@ -9,7 +9,7 @@ import java.util.UUID;
 
 public interface MedicamentoService {
     Medicamento createMedicamento(MedicamentoDTO medicamentoDTO);
-    Medicamento getByNome(String name);
+    Medicamento getMedicamentoByNome(String nomeMedicamento);
     Optional<Medicamento> getById(UUID uuid);
     List<Medicamento> getAll();
     Medicamento updateMedicamento(String name, MedicamentoDTO medicamentoDTO);

@@ -12,7 +12,8 @@ import java.util.UUID;
 
 @Entity
 @Data
-public class User implements UserDetails {
+public class User
+        implements UserDetails {
 
     // ... (id, email, password, name, accessLevel, picture, fcmToken) ...
     @Id
@@ -20,14 +21,20 @@ public class User implements UserDetails {
     @Column(updatable = false, nullable = false)
     private UUID id;
 
-    @Column(unique = true, nullable = false)
+    @Column(name = "email", unique = true, nullable = false)
     private String email;
 
-    @Column(nullable = false)
+    @Column(name = "senha", nullable = false)
     private String password;
 
-    @Column
+    @Column(name = "nome")
     private String name;
+
+    @Column(name = "cpf")
+    private String cpf;
+
+    @Column(name = "telefone")
+    private String telefone;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

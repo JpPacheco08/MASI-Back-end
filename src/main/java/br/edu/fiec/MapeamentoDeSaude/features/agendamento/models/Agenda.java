@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.UUID;
 
 @Entity
@@ -21,17 +22,16 @@ public class Agenda {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
-    @ManyToOne // <-- CORREÇÃO AQUI
+    @ManyToOne(cascade = CascadeType.ALL)
     private User user;
 
-    @ManyToOne // <-- CORREÇÃO AQUI
+    @ManyToOne(cascade = CascadeType.ALL)
     private Ubs ubs;
 
     private AgendaStatus status;
 
     private TipoDePaciente tipoDePaciente;
 
-    @ManyToOne // <-- (Se Atendimento for uma entidade, provavelmente é @ManyToOne também)
     private Atendimento atendimento;
 
     private LocalDateTime horario;
