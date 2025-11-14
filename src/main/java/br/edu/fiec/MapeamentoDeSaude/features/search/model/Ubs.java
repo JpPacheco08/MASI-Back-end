@@ -31,6 +31,9 @@ public class Ubs {
     @Column(name = "longitude")
     private Double longitude;
 
+    @Column(name = "cep")
+    private String cep;
+
     @Column
     private User user;
 

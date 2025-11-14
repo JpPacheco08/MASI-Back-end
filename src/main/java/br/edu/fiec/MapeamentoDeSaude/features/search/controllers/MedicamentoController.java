@@ -22,16 +22,16 @@ public class MedicamentoController {
     private final MedicamentoService medicamentoService;
 
     @PostMapping("/{name}")
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'UBSADMIN')")
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
     public ResponseEntity<Medicamento> createMedicamento(@RequestBody MedicamentoDTO medicamentoDTO) {
         return new ResponseEntity<>(medicamentoService.createMedicamento(medicamentoDTO), HttpStatus.CREATED);
     }
 
-    @GetMapping("/search")
-    @PreAuthorize("isAuthenticated()") // Qualquer usuário logado
-    public ResponseEntity<Medicamento> getMedicamentoByNome(@PathVariable String name) {
-        return new ResponseEntity<>(medicamentoService.getMedicamentoByNome(name), HttpStatus.OK);
-    }
+    //@GetMapping("/search")
+   // @PreAuthorize("isAuthenticated()") // Qualquer usuário logado
+   // public ResponseEntity<Medicamento> getMedicamentoByNome(@PathVariable String name) {
+    //    return new ResponseEntity<>(medicamentoService.getMedicamentoByNome(name), HttpStatus.OK);
+   // }
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('ADMIN', 'UBSADMIN')")

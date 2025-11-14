@@ -14,8 +14,7 @@ public class Medicamento {
 
     @Id
     @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID uuid;
+    private Long id;
 
     @Column(name = "codigo_medicamento")
     private String codigoMedicamento;

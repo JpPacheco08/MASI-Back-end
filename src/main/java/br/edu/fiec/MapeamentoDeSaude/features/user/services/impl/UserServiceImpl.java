@@ -87,7 +87,9 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         User user = new User();
         user.setName(dto.getName());
         user.setEmail(dto.getEmail());
-        user.setPassword(dto.getPassword()); // A senha será criptografada no método save()
+        user.setPassword(dto.getPassword());// A senha será criptografada no método save()
+        user.setCpf(dto.getCpf());
+        user.setTelefone(dto.getTelefone());
         user.setAccessLevel(UserLevel.ADMIN);
         user.setState(RegisterState.PROFILE_CREATED);
         User savedUser = save(user);
@@ -110,6 +112,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         user.setName(dto.getName());
         user.setEmail(dto.getEmail());
         user.setPassword(dto.getPassword());
+        user.setCpf(dto.getCpf());
+        user.setTelefone(dto.getTelefone());
         user.setAccessLevel(UserLevel.UBSADMIN);
         user.setState(RegisterState.PROFILE_CREATED);
         User savedUser = save(user);
@@ -133,6 +137,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         user.setName(dto.getName());
         user.setEmail(dto.getEmail());
         user.setPassword(dto.getPassword());
+        user.setCpf(dto.getCpf());
+        user.setTelefone(dto.getTelefone());
         user.setAccessLevel(UserLevel.USER);
         user.setState(RegisterState.PROFILE_CREATED);
         User savedUser = save(user);
