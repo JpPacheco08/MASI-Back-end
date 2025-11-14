@@ -1,5 +1,7 @@
 package br.edu.fiec.MapeamentoDeSaude.features.search.model;
 
+import br.edu.fiec.MapeamentoDeSaude.features.user.models.UbsAdmin;
+import br.edu.fiec.MapeamentoDeSaude.features.user.models.User;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,7 +19,7 @@ public class Ubs {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(name = "nome_ubs")
+    @Column(name = "nome")
     private String nomeUbs;
 
     @Column(name = "telefone")
@@ -28,5 +30,11 @@ public class Ubs {
 
     @Column(name = "longitude")
     private Double longitude;
+
+    @Column(name = "cep")
+    private String cep;
+
+    @Column
+    private User user;
 
 }

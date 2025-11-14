@@ -8,6 +8,8 @@ import lombok.Data;
 public class MyUserDto {
     String nome;
     String email;
+    String cpf;
+    String telefone;
     String cnpj;
     String crm; // Exemplo para um médico
     String nomeDaEmpresa; // Exemplo para uma UBS

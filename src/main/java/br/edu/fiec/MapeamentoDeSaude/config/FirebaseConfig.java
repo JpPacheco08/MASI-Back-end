@@ -1,11 +1,10 @@
 package br.edu.fiec.MapeamentoDeSaude.config;
 
 
-// import com.google.api.client.util.Value; // 1. APAGUE ESTA LINHA
-import org.springframework.beans.factory.annotation.Value; // 2. ADICIONE ESTA LINHA
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
@@ -18,8 +17,10 @@ public class FirebaseConfig {
 
     // 1. Caminho para o arquivo de chave JSON da conta de serviço
     // Coloque o arquivo JSON na pasta src/main/resources
-    @Value("classpath:firebase-service-account.json") // 3. Agora o Spring vai ler esta linha
-    private Resource serviceAccountResource; // 4. E vai preencher esta variável
+    @Value("classpath:firebase-service-account.json")
+    private Resource serviceAccountResource;
+
+
 
 
     /**
@@ -33,7 +34,7 @@ public class FirebaseConfig {
         if (FirebaseApp.getApps().isEmpty()) {
 
             // Tenta obter o InputStream do arquivo JSON
-            InputStream serviceAccount = serviceAccountResource.getInputStream(); // 5. E O ERRO VAI SUMIR!
+            InputStream serviceAccount = serviceAccountResource.getInputStream();
 
             // Constrói as opções de inicialização do Firebase
             FirebaseOptions options = FirebaseOptions.builder()

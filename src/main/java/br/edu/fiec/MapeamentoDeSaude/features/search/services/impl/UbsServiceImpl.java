@@ -54,6 +54,11 @@ public class UbsServiceImpl implements UbsService {
     }
 
     @Override
+    public void deleteUbs(UUID uuid) {
+
+    }
+
+
     public void deleteUbs(String name) {
         Ubs ubs = getUbsByName(name);
         ubsRepository.deleteById(ubs.getId());
