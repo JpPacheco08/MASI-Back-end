@@ -54,8 +54,13 @@ public class UbsServiceImpl implements UbsService {
     }
 
     @Override
-    public void deleteUbs(String name) {
-        Ubs ubs = getUbsByName(name);
-        ubsRepository.deleteById(ubs.getId());
+    public void deleteUbs(UUID uuid) {
+        // 1. Busca a UBS ou falha se não existir
+        Ubs ubs = getById(uuid) // Assumindo que getById() usa o ubsRepository.findById(uuid)
+                .orElseThrow(() -> new RuntimeException("UBS não encontrada com ID: " + uuid));
+
+        // 2. Deleta a entidade que você encontrou
+        ubsRepository.delete(ubs);
     }
+
 }

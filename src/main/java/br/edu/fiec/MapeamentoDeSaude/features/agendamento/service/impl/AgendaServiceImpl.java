@@ -12,27 +12,31 @@ import br.edu.fiec.MapeamentoDeSaude.features.firebase.models.dto.NotificationMe
 import br.edu.fiec.MapeamentoDeSaude.features.firebase.services.NotificationService;
 import br.edu.fiec.MapeamentoDeSaude.features.search.model.Ubs;
 import br.edu.fiec.MapeamentoDeSaude.features.search.repositories.UbsRepository;
+import br.edu.fiec.MapeamentoDeSaude.features.user.models.UbsAdmin; // Importe UbsAdmin
 import br.edu.fiec.MapeamentoDeSaude.features.user.models.User;
 import br.edu.fiec.MapeamentoDeSaude.features.user.models.UserLevel;
+import br.edu.fiec.MapeamentoDeSaude.features.user.repositories.UbsAdminRepository; // Importe o repositório
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.access.AccessDeniedException; // 1. IMPORTAR
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;// 2. IMPORTAR
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors; // 3. IMPORTAR
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
 @Slf4j
 public class AgendaServiceImpl implements AgendaService {
 
-    private UbsRepository ubsRepository;
-    private AtendimentoRepository atendimentoRepository;
-    private AgendaRepository agendaRepository;
-    private NotificationService notificationService;
+    // (Certifique-se que todos estes estão declarados como 'final' para o @AllArgsConstructor)
+    private final UbsRepository ubsRepository;
+    private final AtendimentoRepository atendimentoRepository;
+    private final AgendaRepository agendaRepository;
+    private final NotificationService notificationService;
+    private final UbsAdminRepository ubsAdminRepository; // Este foi o repositório que adicionamos
 
     @Override
     public AgendaResponseDTO createAgenda(AgendaRequestDTO agendaRequestDTO, User user) {
@@ -47,13 +51,11 @@ public class AgendaServiceImpl implements AgendaService {
                 .status(AgendaStatus.PENDENTE)
                 .build());
 
-        // ADICIONADO: Retornar o DTO convertido em vez de null
         return AgendaResponseDTO.convertFromAgenda(agenda);
     }
 
     @Override
     public List<AgendaResponseDTO> getAllByUbs(Ubs ubs) {
-        // ADICIONADO: Lógica de busca
         return agendaRepository.findByUbs(ubs).stream()
                 .map(AgendaResponseDTO::convertFromAgenda)
                 .collect(Collectors.toList());
@@ -61,7 +63,6 @@ public class AgendaServiceImpl implements AgendaService {
 
     @Override
     public List<AgendaResponseDTO> getAllByUbsAndStatus(Ubs ubs, AgendaStatus status) {
-        // ADICIONADO: Lógica de busca com o método que criamos no repositório
         return agendaRepository.findByUbsAndStatus(ubs, status).stream()
                 .map(AgendaResponseDTO::convertFromAgenda)
                 .collect(Collectors.toList());
@@ -69,7 +70,6 @@ public class AgendaServiceImpl implements AgendaService {
 
     @Override
     public List<AgendaResponseDTO> getByUser(User user) {
-        // ADICIONADO: Lógica de busca
         return agendaRepository.findByUser(user).stream()
                 .map(AgendaResponseDTO::convertFromAgenda)
                 .collect(Collectors.toList());
@@ -77,7 +77,6 @@ public class AgendaServiceImpl implements AgendaService {
 
     @Override
     public AgendaResponseDTO getById(String id) {
-        // ADICIONADO: Lógica de busca
         return agendaRepository.findById(UUID.fromString(id))
                 .map(AgendaResponseDTO::convertFromAgenda)
                 .orElseThrow(() -> new RuntimeException("Agenda não encontrada"));
@@ -86,7 +85,16 @@ public class AgendaServiceImpl implements AgendaService {
     @Override
     public AgendaResponseDTO aprovaAgenda(String agendaId, User user) {
         // (Opcional) Verifica se o admin pertence à UBS da agenda
-        Ubs ubs = ubsRepository.findByUser(user).orElseThrow(() -> new RuntimeException("Perfil de UBS Admin não encontrado."));
+
+        // ---- INÍCIO DA CORREÇÃO ----
+        // 1. Encontra o perfil do admin
+        UbsAdmin admin = ubsAdminRepository.findByUser(user)
+                .orElseThrow(() -> new RuntimeException("Perfil de UBS Admin não encontrado."));
+        // 2. Encontra a UBS real usando o nome que está no perfil do admin
+        Ubs ubs = ubsRepository.findByNomeUbs(admin.getNomeDaUbs())
+                .orElseThrow(() -> new RuntimeException("UBS ligada ao admin (" + admin.getNomeDaUbs() + ") não encontrada."));
+        // ---- FIM DA CORREÇÃO ----
+
         Agenda agenda = agendaRepository.findById(UUID.fromString(agendaId)).orElseThrow();
 
         if (!agenda.getUbs().getId().equals(ubs.getId()) && !user.getAccessLevel().equals(UserLevel.ADMIN)) {
@@ -107,7 +115,6 @@ public class AgendaServiceImpl implements AgendaService {
             log.error("Ocorreu um erro" , exception);
         }
 
-        // ADICIONADO: Retornar o DTO convertido em vez de null
         return AgendaResponseDTO.convertFromAgenda(agendaSalva);
     }
 
@@ -124,9 +131,8 @@ public class AgendaServiceImpl implements AgendaService {
 
         // 2. REGRA DE 24 HORAS
         LocalDateTime agora = LocalDateTime.now();
-        LocalDateTime limiteParaCancelar = agenda.getHorario().minusHours(24); // <--- LINHA DO ERRO
+        LocalDateTime limiteParaCancelar = agenda.getHorario().minusHours(24);
 
-        // Se "agora" estiver depois do limite, lança o erro
         if (agora.isAfter(limiteParaCancelar)) {
             throw new RuntimeException("Agendamentos só podem ser cancelados com mais de 24 horas de antecedência.");
         }
@@ -140,9 +146,19 @@ public class AgendaServiceImpl implements AgendaService {
     @Override
     public List<AgendaResponseDTO> getAgendas(User user) {
         if (UserLevel.UBSADMIN.equals(user.getAccessLevel())) {
-            Ubs ubs = ubsRepository.findByUser(user).orElseThrow(() -> new RuntimeException("Perfil de UBS Admin não encontrado."));
+
+            // ---- INÍCIO DA CORREÇÃO ----
+            // 1. Encontra o perfil do admin
+            UbsAdmin admin = ubsAdminRepository.findByUser(user)
+                    .orElseThrow(() -> new RuntimeException("Perfil de UBS Admin não encontrado."));
+            // 2. Encontra a UBS real
+            Ubs ubs = ubsRepository.findByNomeUbs(admin.getNomeDaUbs())
+                    .orElseThrow(() -> new RuntimeException("UBS ligada ao admin (" + admin.getNomeDaUbs() + ") não encontrada."));
+            // ---- FIM DA CORREÇÃO ----
+
             List<Agenda> agendas = agendaRepository.findByUbs(ubs);
             return agendas.stream().map(AgendaResponseDTO::convertFromAgenda).toList();
+
         } else if (UserLevel.USER.equals(user.getAccessLevel())) {
             List<Agenda> agendas = agendaRepository.findByUser(user);
             return agendas.stream().map(AgendaResponseDTO::convertFromAgenda).toList();

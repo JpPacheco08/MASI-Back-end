@@ -21,16 +21,17 @@ public class Agenda {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @ManyToOne // <-- CORREÇÃO AQUI
     private User user;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @ManyToOne // <-- CORREÇÃO AQUI
     private Ubs ubs;
 
     private AgendaStatus status;
 
     private TipoDePaciente tipoDePaciente;
 
+    @ManyToOne // <-- (Se Atendimento for uma entidade, provavelmente é @ManyToOne também)
     private Atendimento atendimento;
 
     private LocalDateTime horario;
