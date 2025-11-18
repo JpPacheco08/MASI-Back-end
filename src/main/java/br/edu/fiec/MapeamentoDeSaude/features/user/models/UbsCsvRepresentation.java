@@ -15,6 +15,15 @@ public class UbsCsvRepresentation {
     @CsvBindByName(column = "nomeUbs", required = true)
     private String nomeUbs;
 
-    @CsvBindByName(column = "endereco", required = true)
-    private String endereco;
+    @CsvBindByName(column = "logradouro", required = true)
+    private String logradouro;
+
+    @CsvBindByName(column = "cep", required = true)
+    private String cep;
+
+    @CsvBindByName(column = "complemento", required = true)
+    private String complemento;
+
+    @CsvBindByName(column = "telefone", required = true)
+    private String telefone;
 }
