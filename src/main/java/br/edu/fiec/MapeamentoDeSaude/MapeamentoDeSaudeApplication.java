@@ -1,4 +1,4 @@
-package br.edu.fiec.MapeamentoDeSaude;
+ package br.edu.fiec.MapeamentoDeSaude;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

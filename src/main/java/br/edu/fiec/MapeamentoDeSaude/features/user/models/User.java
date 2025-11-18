@@ -36,6 +36,12 @@ public class User
     @Column(name = "telefone")
     private String telefone;
 
+    @Column(name = "latitude")
+    private Double latitude;
+
+    @Column(name = "longitude")
+    private Double longitude;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private UserLevel accessLevel;

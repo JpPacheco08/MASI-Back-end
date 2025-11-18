@@ -15,7 +15,7 @@ public interface UbsService {
     Ubs createUbs(UbsDTO ubsDto);
     Ubs getUbsByName(String name);
     Optional<Ubs> getById(UUID uuid);
-    List<Ubs> getAllUbs();
+    List<UbsDTO> getAllUbs();
     Ubs updateUbs(String name, UbsDTO ubsDto);
     void deleteUbs(UUID uuid);
 

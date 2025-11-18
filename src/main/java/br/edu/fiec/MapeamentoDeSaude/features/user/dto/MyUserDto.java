@@ -11,6 +11,8 @@ public class MyUserDto {
     String cpf;
     String telefone;
     String cnpj;
+    Double latitude;
+    Double longitude;
     String crm; // Exemplo para um médico
     String nomeDaEmpresa; // Exemplo para uma UBS
     String tipo;

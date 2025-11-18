@@ -8,6 +8,7 @@ import br.edu.fiec.MapeamentoDeSaude.features.user.dto.RegisterPacienteDto;
 import br.edu.fiec.MapeamentoDeSaude.features.user.dto.RegisterUbsAdminDto;
 import br.edu.fiec.MapeamentoDeSaude.features.user.models.User;
 
+import java.io.InputStream;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -29,4 +30,5 @@ public interface UserService {
     CreatedUserResponseDto saveUbsAdmin(RegisterUbsAdminDto registerUbsAdminDto);
     CreatedUserResponseDto savePaciente(RegisterPacienteDto registerPacienteDto);
     User updateFcmToken(UUID userId, FcmTokenRequest request);
+    void createUsers(InputStream inputStream);
 }

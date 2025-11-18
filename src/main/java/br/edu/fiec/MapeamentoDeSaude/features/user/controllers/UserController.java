@@ -49,6 +49,8 @@ public class UserController {
         return userService.getMe(user);
     }
 
+
+
     // 6. MÉTODO TOTALMENTE MODIFICADO
     @PutMapping("/photo")
     @PreAuthorize("isAuthenticated()") // Qualquer usuário logado
@@ -64,5 +66,11 @@ public class UserController {
         user.setPicture(imageName);
         user.setState(RegisterState.IMAGE_CREATED); // Atualiza o estado do usuário
         userService.save(user);
+    }
+
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PostMapping("/csv")
+    public void createUsers(@RequestParam("inputFile") MultipartFile file) throws IOException {
+        userService.createUsers(file.getInputStream());
     }
 }
