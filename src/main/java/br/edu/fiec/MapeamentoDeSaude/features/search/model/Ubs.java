@@ -16,8 +16,7 @@ public class Ubs {
 
     @Id
     @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+    private Long id;
 
     @Column(name = "nome")
     private String nomeUbs;
@@ -30,6 +29,12 @@ public class Ubs {
 
     @Column(name = "longitude")
     private Double longitude;
+
+    @Column(name = "logradouro")
+    private String logradouro;
+
+    @Column(name = "complemento")
+    private String complemento;
 
     @Column(name = "cep")
     private String cep;

@@ -33,7 +33,7 @@ public class UbsController  {
 
     @GetMapping
     @PreAuthorize("isAuthenticated()") // Qualquer usuário logado
-    public ResponseEntity<List<Ubs>> getAllUbs() {
+    public ResponseEntity<List<UbsDTO>> getAllUbs() {
         return ResponseEntity.ok(ubsService.getAllUbs());
     }
 

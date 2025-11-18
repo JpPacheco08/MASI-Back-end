@@ -39,8 +39,9 @@ public class UbsServiceImpl implements UbsService {
     }
 
     @Override
-    public List<Ubs> getAllUbs() {
-        return ubsRepository.findAll();
+    public List<UbsDTO> getAllUbs() {
+        List<Ubs> ubs = ubsRepository.findAll();
+        return ubs.stream().map(UbsDTO::convertFromUbs).toList();
     }
 
     @Override
@@ -58,9 +59,4 @@ public class UbsServiceImpl implements UbsService {
 
     }
 
-
-    public void deleteUbs(String name) {
-        Ubs ubs = getUbsByName(name);
-        ubsRepository.deleteById(ubs.getId());
-    }
 }

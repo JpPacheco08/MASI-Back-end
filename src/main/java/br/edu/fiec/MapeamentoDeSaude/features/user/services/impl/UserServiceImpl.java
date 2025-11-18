@@ -9,12 +9,19 @@ import br.edu.fiec.MapeamentoDeSaude.features.user.repositories.UbsAdminReposito
 import br.edu.fiec.MapeamentoDeSaude.features.user.repositories.UserRepository;
 import br.edu.fiec.MapeamentoDeSaude.features.user.services.UserService;
 import br.edu.fiec.MapeamentoDeSaude.utils.PasswordEncryptor;
+import com.opencsv.bean.CsvToBean;
+import com.opencsv.bean.CsvToBeanBuilder;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -71,6 +78,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         myUserDto.setNome(user.getName());
         myUserDto.setEmail(user.getEmail());
         myUserDto.setPicture(user.getPicture());
+        myUserDto.setLatitude(user.getLatitude());
+        myUserDto.setLongitude(user.getLongitude());
         return myUserDto;
     }
 
@@ -216,5 +225,70 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
         // 3. Salva a alteração (o @Transactional garante que a persistência ocorra)
         return userRepository.save(user);
+    }
+
+    @Override
+    @Transactional // quero tudo ou nada
+    public void createUsers(InputStream inputStream) {
+
+
+        List<UserCsvRepresentation> users = new ArrayList<>();
+        try (Reader reader = new InputStreamReader(inputStream)) {
+
+            // Create a CsvToBean object from the Reader
+            CsvToBean<UserCsvRepresentation> csvToBean = new CsvToBeanBuilder(reader)
+                    .withType(UserCsvRepresentation.class) // Specify the target bean class
+                    .withIgnoreLeadingWhiteSpace(true) // Clean up any extra spaces
+                    .withSkipLines(0) // Skips the header row if present
+                    .build();
+
+            // Parse the data and return a List of beans
+            users = csvToBean.parse();
+        } catch (Exception e) {
+            // Handle IO or CSV parsing exceptions
+            throw new RuntimeException("Failed to parse CSV file: " + e.getMessage(), e);
+        }
+
+        try {
+
+            for (UserCsvRepresentation csvUser : users) {
+                User user = new User();
+                user.setEmail(csvUser.getEmail());
+                user.setName(csvUser.getName());
+                user.setPassword(PasswordEncryptor.encrypt(csvUser.getPassword()));
+                UserLevel level = UserLevel.valueOf("ROLE_" + csvUser.getAccesLevel());
+                user.setAccessLevel(level);
+                save(user);
+                switch (level) {
+                    case UserLevel.USER:
+                        Paciente paciente = new Paciente();
+
+                        paciente.setUser(user);
+                        paciente.setCpf(csvUser.getCpf());
+                        paciente.setCidade(csvUser.getCidade());
+                        paciente.setCep(csvUser.getCep());
+                        pacienteRepository.save(paciente);
+                        break;
+                    case UserLevel.UBSADMIN:
+                        UbsAdmin ubsAdmin = new UbsAdmin();
+
+                        ubsAdmin.setUser(user);
+                        ubsAdmin.setCnpj(csvUser.getCnpj());
+                        ubsAdmin.setNomeDaUbs(csvUser.getNomeDaUbs());
+                        ubsAdminRepository.save(ubsAdmin);
+                        break;
+
+                    default:
+                        break;
+
+                }
+
+            }
+        }catch (Exception ex){
+            throw new RuntimeException("Failed to parse CSV file: " + ex.getMessage(), ex);
+
+        }
+
+
     }
 }
