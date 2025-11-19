@@ -1,7 +1,6 @@
-package br.edu.fiec.MapeamentoDeSaude.features.user.models;
+package br.edu.fiec.MapeamentoDeSaude.features.search.model;
 
 import com.opencsv.bean.CsvBindByName;
-import jakarta.persistence.Column;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
