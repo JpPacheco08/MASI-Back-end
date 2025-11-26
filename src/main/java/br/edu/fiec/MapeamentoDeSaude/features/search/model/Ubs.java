@@ -42,4 +42,6 @@ public class Ubs {
     @Column
     private User user;
 
+    @Column
+    private String Endereco;
 }
