@@ -54,6 +54,12 @@ public class UbsServiceImpl implements UbsService {
         if (jsonResponse == null || jsonResponse.isEmpty()) return null;
         try {
             JsonNode root = objectMapper.readTree(jsonResponse);
+            // Verifica se o status é OK
+            if (!"OK".equals(root.path("status").asText())) {
+                log.warn("Google API retornou status não-OK: {}", root.path("status").asText());
+                return null;
+            }
+
             JsonNode locationNode = root.path("results").path(0).path("geometry").path("location");
 
             if (locationNode.isMissingNode()) {
@@ -76,18 +82,22 @@ public class UbsServiceImpl implements UbsService {
         return ubs.stream().map(UbsDTO::convertFromUbs).toList();
     }
 
-    // --- Métodos CRUD Padrão (Mantidos) ---
     @Override
     public Ubs createUbs(UbsDTO ubsDto) {
         Ubs ubs = new Ubs();
         ubs.setNomeUbs(ubsDto.getNomeUbs());
         ubs.setTelefone(ubsDto.getTelefone());
+        ubs.setLogradouro(ubsDto.getLogradouro());
+        ubs.setComplemento(ubsDto.getComplemento());
+        ubs.setEndereco(ubsDto.getEndereco());
+
         // Geocoding automático na criação
-        if (ubsDto.getLatitude() != null) {
+        if (ubsDto.getLatitude() != null && ubsDto.getLongitude() != null) {
             ubs.setLatitude(ubsDto.getLatitude());
             ubs.setLongitude(ubsDto.getLongitude());
-        } else if (ubsDto.getEndereco() != null) {
-            double[] coords = parseCoordinatesFromJson(geocodingService.getCoordinatesFromAddress(ubsDto.getEndereco()));
+        } else if (ubsDto.getEndereco() != null && !ubsDto.getEndereco().isEmpty()) {
+            String jsonResponse = geocodingService.getCoordinatesFromAddress(ubsDto.getEndereco());
+            double[] coords = parseCoordinatesFromJson(jsonResponse);
             if (coords != null) {
                 ubs.setLatitude(coords[0]);
                 ubs.setLongitude(coords[1]);
@@ -97,8 +107,84 @@ public class UbsServiceImpl implements UbsService {
     }
 
     @Override
-    public void deleteUbs(UUID uuid) {
+    public Ubs updateUbs(String name, UbsDTO ubsDto) {
+        // Busca a UBS pelo nome antigo (ou ID, dependendo da sua lógica de negócio, mas mantive nome conforme interface)
+        Ubs ubs = ubsRepository.findByNomeUbs(name)
+                .orElseThrow(() -> new RuntimeException("UBS não encontrada com o nome: " + name));
 
+        ubs.setNomeUbs(ubsDto.getNomeUbs());
+        ubs.setTelefone(ubsDto.getTelefone());
+        ubs.setLogradouro(ubsDto.getLogradouro());
+        ubs.setComplemento(ubsDto.getComplemento());
+        ubs.setEndereco(ubsDto.getEndereco());
+
+        // Se a latitude/longitude vierem preenchidas, usa elas
+        if (ubsDto.getLatitude() != null && ubsDto.getLongitude() != null) {
+            ubs.setLatitude(ubsDto.getLatitude());
+            ubs.setLongitude(ubsDto.getLongitude());
+        }
+        // Se mudou o endereço e não mandou lat/long, recalcula
+        else if (ubsDto.getEndereco() != null && !ubsDto.getEndereco().isEmpty()) {
+            String jsonResponse = geocodingService.getCoordinatesFromAddress(ubsDto.getEndereco());
+            double[] coords = parseCoordinatesFromJson(jsonResponse);
+            if (coords != null) {
+                ubs.setLatitude(coords[0]);
+                ubs.setLongitude(coords[1]);
+            }
+        }
+
+        return ubsRepository.save(ubs);
     }
 
+    @Override
+    public Ubs getUbsByName(String name) {
+        return ubsRepository.findByNomeUbs(name)
+                .orElseThrow(() -> new RuntimeException("UBS não encontrada: " + name));
+    }
+
+    @Override
+    public Optional<Ubs> getById(UUID uuid) {
+        return ubsRepository.findById(uuid);
+    }
+
+    @Override
+    public void deleteUbs(UUID uuid) {
+        if (!ubsRepository.existsById(uuid)) {
+            throw new RuntimeException("UBS não encontrada para exclusão.");
+        }
+        ubsRepository.deleteById(uuid);
+    }
+
+    // 👇 AQUI ESTÁ A LÓGICA DAS UBSs PRÓXIMAS
+    @Override
+    public List<UbsDistanciaDTO> findUbsMaisProximas(EnderecoDTO enderecoDTO) {
+
+        // 1. Descobrir onde o usuário está (Lat/Long do endereço que ele digitou)
+        String jsonResponse = geocodingService.getCoordinatesFromAddress(enderecoDTO.getEndereco());
+        double[] userCoords = parseCoordinatesFromJson(jsonResponse);
+
+        if (userCoords == null) {
+            throw new RuntimeException("Não foi possível localizar as coordenadas do endereço informado.");
+        }
+
+        double userLat = userCoords[0];
+        double userLon = userCoords[1];
+
+        // 2. Pegar todas as UBSs do banco
+        List<Ubs> todasUbs = ubsRepository.findAll();
+
+        // 3. Calcular distância, converter para DTO e ordenar
+        return todasUbs.stream()
+                // Filtra apenas UBS que tenham coordenadas cadastradas
+                .filter(ubs -> ubs.getLatitude() != null && ubs.getLongitude() != null)
+                .map(ubs -> {
+                    // Calcula a distância
+                    double distancia = haversine(userLat, userLon, ubs.getLatitude(), ubs.getLongitude());
+                    // Cria o DTO com a distância
+                    return new UbsDistanciaDTO(ubs, distancia);
+                })
+                // Ordena da menor distância para a maior
+                .sorted(Comparator.comparingDouble(UbsDistanciaDTO::getDistanciaEmKm))
+                .collect(Collectors.toList());
+    }
 }
