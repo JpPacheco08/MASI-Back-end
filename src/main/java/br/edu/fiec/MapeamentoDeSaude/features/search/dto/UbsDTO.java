@@ -13,6 +13,7 @@ public class UbsDTO {
     private String telefone;
     private Double latitude;
     private Double longitude;
+    private String endereco;
 
     public static UbsDTO convertFromUbs(Ubs ubs) {
         UbsDTO ubsDTO = new UbsDTO();
@@ -23,6 +24,7 @@ public class UbsDTO {
         ubsDTO.setTelefone(ubs.getTelefone());
         ubsDTO.setLatitude(ubs.getLatitude());
         ubsDTO.setLongitude(ubs.getLongitude());
+        ubsDTO.setEndereco(ubs.getEndereco());
 
         return ubsDTO;
     }
