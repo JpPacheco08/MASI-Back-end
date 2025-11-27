@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 public class UbsCsvRepresentation {
 
     @CsvBindByName(column = "idUbs", required = true)
-    private Long idUbs;
+    private String idUbs;
 
     @CsvBindByName(column = "nomeUbs", required = true)
     private String nomeUbs;

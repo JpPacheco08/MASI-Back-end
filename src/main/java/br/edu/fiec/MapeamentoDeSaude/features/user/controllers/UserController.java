@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException; // 4. IMPORTAR IOException
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/v1/api/users")
@@ -39,6 +40,11 @@ public class UserController {
     @PostMapping("/paciente")
     public CreatedUserResponseDto registerPaciente(@Valid @RequestBody RegisterPacienteDto registerPacienteDto) {
         return userService.savePaciente(registerPacienteDto);
+    }
+
+    @DeleteMapping("/delete")
+    public void deletById(@RequestParam CreatedUserResponseDto createdUserResponseDto ) {
+        userService.deleteById(UUID.fromString(createdUserResponseDto.getId()));
     }
 
 

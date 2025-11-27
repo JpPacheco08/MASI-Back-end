@@ -135,8 +135,8 @@ public class UbsServiceImpl implements UbsService {
         try (Reader reader = new InputStreamReader(inputStream)) {
 
             // Create a CsvToBean object from the Reader
-            CsvToBean<UbsCsvRepresentation> csvToBean = new CsvToBeanBuilder(reader)
-                    .withType(UserCsvRepresentation.class) // Specify the target bean class
+            CsvToBean csvToBean = new CsvToBeanBuilder(reader)
+                    .withType(UbsCsvRepresentation.class) // Specify the target bean class
                     .withIgnoreLeadingWhiteSpace(true) // Clean up any extra spaces
                     .withSkipLines(0) // Skips the header row if present
                     .build();
@@ -157,7 +157,7 @@ public class UbsServiceImpl implements UbsService {
                 ubs.setLogradouro(csvUbs.getLogradouro());
                 ubs.setComplemento(csvUbs.getComplemento());
                 ubs.setTelefone(csvUbs.getTelefone());
-                ubs.setId(csvUbs.getIdUbs());
+                ubs.setId(Long.parseLong(csvUbs.getIdUbs()));
 
                 double[] coords = parseCoordinatesFromJson(geocodingService.getCoordinatesFromAddress(ubs.getLogradouro()));
                 if (coords != null) {
