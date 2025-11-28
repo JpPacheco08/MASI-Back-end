@@ -24,7 +24,7 @@ public class UbsDTO {
         ubsDTO.setTelefone(ubs.getTelefone());
         ubsDTO.setLatitude(ubs.getLatitude());
         ubsDTO.setLongitude(ubs.getLongitude());
-        ubsDTO.setEndereco(ubs.getEndereco());
+        ubsDTO.setEndereco(ubs.getLogradouro());
 
         return ubsDTO;
     }

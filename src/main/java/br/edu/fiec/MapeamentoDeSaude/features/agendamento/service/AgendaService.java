@@ -4,9 +4,11 @@ import br.edu.fiec.MapeamentoDeSaude.features.agendamento.dto.AgendaRequestDTO;
 import br.edu.fiec.MapeamentoDeSaude.features.agendamento.dto.AgendaResponseDTO;
 import br.edu.fiec.MapeamentoDeSaude.features.agendamento.models.Agenda;
 import br.edu.fiec.MapeamentoDeSaude.features.agendamento.models.AgendaStatus;
+import br.edu.fiec.MapeamentoDeSaude.features.agendamento.models.Atendimento;
 import br.edu.fiec.MapeamentoDeSaude.features.search.model.Ubs;
 import br.edu.fiec.MapeamentoDeSaude.features.user.models.User;
 
+import java.io.InputStream;
 import java.util.List;
 
 public interface AgendaService {
@@ -21,4 +23,8 @@ public interface AgendaService {
     List<AgendaResponseDTO> getAgendas(User user);
 
     void cancelarAgenda(String agendaId, User user);
+
+    void createAllAtendimentos(InputStream inputStream);
+
+    List<Atendimento> getAllAtendimentos();
 }

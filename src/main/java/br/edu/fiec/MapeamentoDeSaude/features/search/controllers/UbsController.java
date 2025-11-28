@@ -5,9 +5,12 @@ import br.edu.fiec.MapeamentoDeSaude.features.search.dto.UbsDTO;
 import br.edu.fiec.MapeamentoDeSaude.features.search.dto.UbsDistanciaDTO;
 import br.edu.fiec.MapeamentoDeSaude.features.search.model.Ubs;
 import br.edu.fiec.MapeamentoDeSaude.features.search.services.UbsService;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -65,7 +68,9 @@ public class UbsController {
 
     //@PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @PostMapping("/csv")
-    public void createAllUBs(@RequestParam("inputFile") MultipartFile file) throws IOException {
+    public void createAllUBs(
+
+            @RequestParam("inputFile") MultipartFile file) throws IOException {
         ubsService.createAllUbs(file.getInputStream());
     }
 }

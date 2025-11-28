@@ -4,19 +4,23 @@ import br.edu.fiec.MapeamentoDeSaude.features.search.dto.EnderecoDTO;
 import br.edu.fiec.MapeamentoDeSaude.features.search.dto.UbsDTO;
 import br.edu.fiec.MapeamentoDeSaude.features.search.dto.UbsDistanciaDTO;
 import br.edu.fiec.MapeamentoDeSaude.features.search.model.Ubs;
+import br.edu.fiec.MapeamentoDeSaude.features.search.model.UbsCsvRepresentation;
 import br.edu.fiec.MapeamentoDeSaude.features.search.repositories.UbsRepository;
 import br.edu.fiec.MapeamentoDeSaude.features.search.services.UbsService;
 import br.edu.fiec.MapeamentoDeSaude.shared.service.GeocodingService;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.opencsv.bean.CsvToBean;
+import com.opencsv.bean.CsvToBeanBuilder;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -76,6 +80,11 @@ public class UbsServiceImpl implements UbsService {
         return ubs.stream().map(UbsDTO::convertFromUbs).toList();
     }
 
+    @Override
+    public Ubs updateUbs(String name, UbsDTO ubsDto) {
+        return null;
+    }
+
     // --- Métodos CRUD Padrão (Mantidos) ---
     @Override
     public Ubs createUbs(UbsDTO ubsDto) {
@@ -97,8 +106,102 @@ public class UbsServiceImpl implements UbsService {
     }
 
     @Override
+    public Ubs getUbsByName(String name) {
+        return null;
+    }
+
+    @Override
+    public Optional<Ubs> getById(UUID uuid) {
+        return Optional.empty();
+    }
+
+    @Override
     public void deleteUbs(UUID uuid) {
 
     }
+
+    @Override
+    @Transactional // quero tudo ou nada
+    public void createAllUbs(InputStream inputStream) {
+
+
+        List<UbsCsvRepresentation> allUbs = new ArrayList<>();
+        try (Reader reader = new InputStreamReader(inputStream)) {
+
+            // Create a CsvToBean object from the Reader
+            CsvToBean csvToBean = new CsvToBeanBuilder(reader)
+                    .withType(UbsCsvRepresentation.class) // Specify the target bean class
+                    .withIgnoreLeadingWhiteSpace(true) // Clean up any extra spaces
+                    .withSkipLines(0) // Skips the header row if present
+                    .build();
+
+            // Parse the data and return a List of beans
+            allUbs = csvToBean.parse();
+        } catch (Exception e) {
+            // Handle IO or CSV parsing exceptions
+            throw new RuntimeException("Failed to parse CSV file: " + e.getMessage(), e);
+        }
+
+        try {
+
+            for (UbsCsvRepresentation csvUbs : allUbs) {
+                Ubs ubs = new Ubs();
+                ubs.setNomeUbs(csvUbs.getNomeUbs());
+                ubs.setCep(csvUbs.getCep());
+                ubs.setLogradouro(csvUbs.getLogradouro());
+                ubs.setComplemento(csvUbs.getComplemento());
+                ubs.setTelefone(csvUbs.getTelefone());
+                ubs.setId(Long.parseLong(csvUbs.getIdUbs()));
+
+                double[] coords = parseCoordinatesFromJson(geocodingService.getCoordinatesFromAddress(ubs.getLogradouro()));
+                if (coords != null) {
+                    ubs.setLatitude(coords[0]);
+                    ubs.setLongitude(coords[1]);
+
+                }
+                ubsRepository.save(ubs);
+
+            }
+        }catch (Exception ex){
+            throw new RuntimeException("Failed to parse CSV file: " + ex.getMessage(), ex);
+
+        }
+
+
+    }
+
+    @Override
+    public List<UbsDistanciaDTO> findUbsMaisProximas(EnderecoDTO enderecoDTO) {
+
+        // 1. Descobrir onde o usuÃ¡rio estÃ¡ (Lat/Long do endereÃ§o que ele digitou)
+        String jsonResponse = geocodingService.getCoordinatesFromAddress(enderecoDTO.getEndereco());
+        double[] userCoords = parseCoordinatesFromJson(jsonResponse);
+
+        if (userCoords == null) {
+            throw new RuntimeException("NÃ£o foi possÃ­vel localizar as coordenadas do endereÃ§o informado.");
+        }
+
+        double userLat = userCoords[0];
+        double userLon = userCoords[1];
+
+        // 2. Pegar todas as UBSs do banco
+        List<Ubs> todasUbs = ubsRepository.findAll();
+
+        // 3. Calcular distÃ¢ncia, converter para DTO e ordenar
+        return todasUbs.stream()
+                // Filtra apenas UBS que tenham coordenadas cadastradas
+                .filter(ubs -> ubs.getLatitude() != null && ubs.getLongitude() != null)
+                .map(ubs -> {
+                    // Calcula a distÃ¢ncia
+                    double distancia = haversine(userLat, userLon, ubs.getLatitude(), ubs.getLongitude());
+                    // Cria o DTO com a distÃ¢ncia
+                    return new UbsDistanciaDTO(ubs, distancia);
+                })
+                // Ordena da menor distÃ¢ncia para a maior
+                .sorted(Comparator.comparingDouble(UbsDistanciaDTO::getDistanciaEmKm))
+                .collect(Collectors.toList());
+    }
+
+
 
 }

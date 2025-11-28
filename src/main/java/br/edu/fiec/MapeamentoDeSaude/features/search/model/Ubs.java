@@ -39,9 +39,5 @@ public class Ubs {
     @Column(name = "cep")
     private String cep;
 
-    @Column
-    private User user;
 
-    @Column
-    private String Endereco;
 }
