@@ -5,22 +5,32 @@ import br.edu.fiec.MapeamentoDeSaude.features.agendamento.dto.AgendaResponseDTO;
 import br.edu.fiec.MapeamentoDeSaude.features.agendamento.models.Agenda;
 import br.edu.fiec.MapeamentoDeSaude.features.agendamento.models.AgendaStatus;
 import br.edu.fiec.MapeamentoDeSaude.features.agendamento.models.Atendimento;
+import br.edu.fiec.MapeamentoDeSaude.features.agendamento.models.AtendimentoCsvRepresentation;
 import br.edu.fiec.MapeamentoDeSaude.features.agendamento.repository.AgendaRepository;
 import br.edu.fiec.MapeamentoDeSaude.features.agendamento.repository.AtendimentoRepository;
 import br.edu.fiec.MapeamentoDeSaude.features.agendamento.service.AgendaService;
 import br.edu.fiec.MapeamentoDeSaude.features.firebase.models.dto.NotificationMessage;
 import br.edu.fiec.MapeamentoDeSaude.features.firebase.services.NotificationService;
 import br.edu.fiec.MapeamentoDeSaude.features.search.model.Ubs;
+import br.edu.fiec.MapeamentoDeSaude.features.search.model.UbsCsvRepresentation;
 import br.edu.fiec.MapeamentoDeSaude.features.search.repositories.UbsRepository;
+import br.edu.fiec.MapeamentoDeSaude.features.user.models.UbsAdmin;
 import br.edu.fiec.MapeamentoDeSaude.features.user.models.User;
 import br.edu.fiec.MapeamentoDeSaude.features.user.models.UserLevel;
+import br.edu.fiec.MapeamentoDeSaude.features.user.repositories.UbsAdminRepository;
+import com.opencsv.bean.CsvToBean;
+import com.opencsv.bean.CsvToBeanBuilder;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.AccessDeniedException; // 1. IMPORTAR
 import org.springframework.stereotype.Service;
 
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.time.Instant;
 import java.time.LocalDateTime;// 2. IMPORTAR
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -32,13 +42,14 @@ import java.util.stream.Collectors; // 3. IMPORTAR
 public class AgendaServiceImpl implements AgendaService {
 
     private UbsRepository ubsRepository;
+    private UbsAdminRepository ubsAdminRepository;
     private AtendimentoRepository atendimentoRepository;
     private AgendaRepository agendaRepository;
     private NotificationService notificationService;
 
     @Override
     public AgendaResponseDTO createAgenda(AgendaRequestDTO agendaRequestDTO, User user) {
-        Ubs ubs = ubsRepository.findById(UUID.fromString(agendaRequestDTO.getUbsId())).orElseThrow();
+        Ubs ubs = ubsRepository.findById(Long.valueOf(agendaRequestDTO.getUbsId())).orElseThrow();
         Atendimento atendimento = atendimentoRepository.findById(Long.valueOf(agendaRequestDTO.getAtendimentoId())).orElseThrow();
         Agenda agenda = agendaRepository.save(Agenda.builder()
                 .atendimento(atendimento)
@@ -88,8 +99,9 @@ public class AgendaServiceImpl implements AgendaService {
     @Override
     public AgendaResponseDTO aprovaAgenda(String agendaId, User user) {
         // (Opcional) Verifica se o admin pertence à UBS da agenda
-        Ubs ubs = ubsRepository.findByUser(user).orElseThrow(() -> new RuntimeException("Perfil de UBS Admin não encontrado."));
+        UbsAdmin ubsAdmin = ubsAdminRepository.findByUser(user).orElseThrow(() -> new RuntimeException("Perfil de UBS Admin não encontrado."));
         Agenda agenda = agendaRepository.findById(UUID.fromString(agendaId)).orElseThrow();
+        Ubs ubs = ubsRepository.findByNomeUbs(ubsAdmin.getNomeDaUbs()).orElseThrow();
 
         if (!agenda.getUbs().getId().equals(ubs.getId()) && !user.getAccessLevel().equals(UserLevel.ADMIN)) {
             throw new AccessDeniedException("Você só pode aprovar agendamentos da sua UBS.");
@@ -138,11 +150,59 @@ public class AgendaServiceImpl implements AgendaService {
         agendaRepository.save(agenda);
     }
 
+    @Override
+    public void createAllAtendimentos(InputStream inputStream) {
+        List<AtendimentoCsvRepresentation> allAtendimentos = new ArrayList<>();
+        try (Reader reader = new InputStreamReader(inputStream)) {
+
+            // Create a CsvToBean object from the Reader
+            CsvToBean csvToBean = new CsvToBeanBuilder(reader)
+                    .withType(AtendimentoCsvRepresentation.class) // Specify the target bean class
+                    .withIgnoreLeadingWhiteSpace(true) // Clean up any extra spaces
+                    .withSkipLines(0) // Skips the header row if present
+                    .build();
+
+            // Parse the data and return a List of beans
+            allAtendimentos = csvToBean.parse();
+        } catch (Exception e) {
+            // Handle IO or CSV parsing exceptions
+            throw new RuntimeException("Failed to parse CSV file: " + e.getMessage(), e);
+        }
+
+        try {
+
+            for (AtendimentoCsvRepresentation csvAtendimento : allAtendimentos) {
+                Atendimento atendimento = new Atendimento();
+                atendimento.setId(csvAtendimento.getId());
+                atendimento.setDescricao(csvAtendimento.getDescricao());
+                atendimento.setDuracao(csvAtendimento.getDuracao());
+                atendimento.setObservacoes(csvAtendimento.getObservacoes());
+                atendimento.setProcedimento(csvAtendimento.getProcedimento());
+
+
+
+                atendimentoRepository.save(atendimento);
+
+            }
+        }catch (Exception ex){
+            throw new RuntimeException("Failed to parse CSV file: " + ex.getMessage(), ex);
+
+        }
+    }
+
+    @Override
+    public List<Atendimento> getAllAtendimentos() {
+        return atendimentoRepository.findAll();
+    }
+
 
     @Override
     public List<AgendaResponseDTO> getAgendas(User user) {
         if (UserLevel.UBSADMIN.equals(user.getAccessLevel())) {
-            Ubs ubs = ubsRepository.findByUser(user).orElseThrow(() -> new RuntimeException("Perfil de UBS Admin não encontrado."));
+            // (Opcional) Verifica se o admin pertence à UBS da agenda
+            UbsAdmin ubsAdmin = ubsAdminRepository.findByUser(user).orElseThrow(() -> new RuntimeException("Perfil de UBS Admin não encontrado."));
+
+            Ubs ubs = ubsRepository.findByNomeUbs(ubsAdmin.getNomeDaUbs()).orElseThrow();
             List<Agenda> agendas = agendaRepository.findByUbs(ubs);
             return agendas.stream().map(AgendaResponseDTO::convertFromAgenda).toList();
         } else if (UserLevel.USER.equals(user.getAccessLevel())) {

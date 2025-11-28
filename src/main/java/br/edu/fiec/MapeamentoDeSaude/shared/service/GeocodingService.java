@@ -45,6 +45,7 @@ public class GeocodingService {
         try {
             // Chama a API
             String jsonResponse = restTemplate.getForObject(GOOGLE_API_URL, String.class, params);
+            log.info("Geocode response: {}",jsonResponse);
             return jsonResponse;
         } catch (Exception e) {
             log.error("Erro ao geocodificar endereço: {}", address, e);

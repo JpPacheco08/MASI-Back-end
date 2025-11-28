@@ -2,6 +2,7 @@ package br.edu.fiec.MapeamentoDeSaude.features.agendamento.controller;
 
 import br.edu.fiec.MapeamentoDeSaude.features.agendamento.dto.AgendaRequestDTO;
 import br.edu.fiec.MapeamentoDeSaude.features.agendamento.dto.AgendaResponseDTO;
+import br.edu.fiec.MapeamentoDeSaude.features.agendamento.models.Atendimento;
 import br.edu.fiec.MapeamentoDeSaude.features.agendamento.service.AgendaService;
 import br.edu.fiec.MapeamentoDeSaude.features.user.models.User;
 import br.edu.fiec.MapeamentoDeSaude.features.user.models.UserLevel;
@@ -11,7 +12,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -56,5 +59,19 @@ public class AgendaController {
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<AgendaResponseDTO> getAgendaPorId(@PathVariable String id) {
         return ResponseEntity.ok(agendaService.getById(id));
+    }
+
+    //@PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PostMapping("/atendimentos/csv")
+    public void createAllUBs(
+
+            @RequestParam("inputFile") MultipartFile file) throws IOException {
+        agendaService.createAllAtendimentos(file.getInputStream());
+    }
+
+    //@PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @GetMapping("/atendimentos/list")
+    public List<Atendimento> getAllAtendimentos() throws IOException {
+        return agendaService.getAllAtendimentos();
     }
 }

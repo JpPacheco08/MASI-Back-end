@@ -9,9 +9,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-public interface UbsRepository extends JpaRepository<Ubs, UUID> {
+public interface UbsRepository extends JpaRepository<Ubs, Long> {
     Optional<Ubs> findByNomeUbs(String nomeUbs);
 
-    // 2. 👇 ADICIONE ESTA LINHA FALTANTE
-    Optional<Ubs> findByUser(User user);
 }
